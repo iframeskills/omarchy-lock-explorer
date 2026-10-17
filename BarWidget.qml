@@ -24,7 +24,31 @@ Item {
     bar: root.bar
     text: "󰌾"
     slotSize: Style.bar.statusSlot
-    tooltipText: "Lock screen"
+    tooltipText: "Lock screen settings"
+
+    // A lock with a small cog at its lower right, so it reads as the lock
+    // screen's settings and not as "lock now". No Nerd Font glyph has both.
+    iconComponent: Component {
+      Item {
+        Text {
+          anchors.centerIn: parent
+          anchors.horizontalCenterOffset: -Math.round(button.fontSize * 0.12)
+          anchors.verticalCenterOffset: -Math.round(button.fontSize * 0.08)
+          text: "󰌾"
+          font.family: button.fontFamily
+          font.pixelSize: button.fontSize
+          color: button.foreground
+        }
+        Text {
+          anchors.right: parent.right
+          anchors.bottom: parent.bottom
+          text: "󰒓"
+          font.family: button.fontFamily
+          font.pixelSize: Math.round(button.fontSize * 0.6)
+          color: button.foreground
+        }
+      }
+    }
 
     onPressed: function(b) {
       if (b === Qt.RightButton) Quickshell.execDetached(["omarchy-shell", "lock", "exploreFull"])

@@ -914,6 +914,34 @@ Item {
     onTriggered: root.restoreSettings()
   }
 
+  // The lock icon goes on the bar once, on the first start, so the settings
+  // are a click away. Saved on the entry as `barIconDefaulted`, so turning the
+  // icon off afterwards sticks. The entry is only written once bar-icon.sh is
+  // done with shell.json, so the two writes cannot clobber each other.
+  function defaultBarIcon() {
+    if (pluginEntry().barIconDefaulted === true) return
+    if (!shell || typeof shell.updateEntryInline !== "function") return
+    if (barIconApplyProc.running) { barIconDefaultTimer.restart(); return }
+    if (localSettings.barHasWidget) {
+      var current = pluginEntry()
+      current.barIconDefaulted = true
+      writeEntry(current)
+      logEvent("bar-icon-defaulted")
+      return
+    }
+    if (barIconDefaultTimer.attempts++ < 5) {
+      setBarIcon(true)
+      barIconDefaultTimer.restart()
+    }
+  }
+
+  Timer {
+    id: barIconDefaultTimer
+    property int attempts: 0
+    interval: 3000
+    onTriggered: root.defaultBarIcon()
+  }
+
   function setInputMonitor(name) {
     var value = String(name || "all")
     inputMonitorOverride = value
@@ -4679,6 +4707,7 @@ echo "$out"
     rivalLockCheckTimer.start()
     checkStrandedLock()
     settingsRestoreTimer.start()
+    barIconDefaultTimer.start()
   }
 
   Component.onDestruction: retireExplorerApi()
