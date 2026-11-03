@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -u
+here="$(cd "$(dirname "$0")" && pwd)"
+jar="${TLA2TOOLS_JAR:-$HOME/.local/share/mise/installs/http-tla2tools/1.7.4/tla2tools.jar}"
+java_bin="${JAVA:-$(ls -d "$HOME"/.local/share/mise/installs/java/temurin-25*/bin/java 2>/dev/null | head -1)}"
+[ -f "$jar" ] && [ -x "$java_bin" ] || { echo "error: tla2tools 1.7.4 or Java 25 is missing"; exit 2; }
+work="$(mktemp -d)"; trap 'rm -rf "$work"' EXIT
+run() { "$java_bin" -XX:+UseParallelGC -cp "$jar" tlc2.TLC -workers auto -deadlock -metadir "$work/$1" -config "$here/$1.cfg" "$here/BarIconFirstStart.tla" >"$work/$1.log" 2>&1; }
+cd "$here" || exit 2
+repo="$(cd "$here/../../.." && pwd)"
+body="$(awk '/function addBarIconOnceOnFirstStart\(\)/{f=1} f{print} f&&/^  }$/{exit}' "$repo/Service.qml")"
+setter="$(awk '/function setBarIcon\(v\)/{f=1} f{print} f&&/^  }$/{exit}' "$repo/Service.qml")"
+order=""
+for needle in 'pluginEntry().barIconDefaulted === true) return' 'barIconApplyProc.running) { barIconFirstStartRetryTimer.restart(); return }' 'localSettings.barHasWidget' 'writeEntry(current)' 'attempts++ < 5' 'setBarIcon(true)'; do
+  n="$(grep -nF -- "$needle" <<<"$body" | head -1 | cut -d: -f1)"
+  [ -n "$n" ] || { echo "fail: Service.qml addBarIconOnceOnFirstStart lost: $needle"; exit 1; }
+  order="$order $n"
+done
+[ "$(tr ' ' '\n' <<<"$order" | sed '/^$/d' | sort -n | tr '\n' ' ')" = "$(tr ' ' '\n' <<<"$order" | sed '/^$/d' | tr '\n' ' ')" ] || { echo "fail: the guards in addBarIconOnceOnFirstStart changed order"; exit 1; }
+grep -qF 'if (barIconApplyProc.running) return false' <<<"$setter" || { echo "fail: setBarIcon lost its running guard"; exit 1; }
+grep -qF 'barIconFirstStartRetryTimer.start()' "$repo/Service.qml" || { echo "fail: the first-start timer is no longer started"; exit 1; }
+run ok; rc=$?
+if [ $rc -eq 0 ]; then echo "ok: every property holds"; exit 0; fi
+grep -q "is violated" "$work/ok.log" && { cat "$work/ok.log"; echo "fail: a property is violated"; exit 1; }
+cat "$work/ok.log"; echo "error: TLC could not run"; exit 2
