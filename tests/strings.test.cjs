@@ -4,12 +4,18 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 
-// designs/Strings.js is a QML JavaScript library; drop the pragma and run it.
 const root = path.join(__dirname, "..");
-const source = fs.readFileSync(path.join(root, "designs/Strings.js"), "utf8").replace(/^\.pragma library\s*/, "");
-const S = {};
-vm.runInNewContext(source + "\nthis.TEXT = TEXT; this.LANGUAGES = LANGUAGES; this.tr = tr; this.fromLocale = fromLocale;"
-  + " this.makeLookup = makeLookup; this.trWith = trWith;", S);
+function loadLibrary(file) {
+  let source = fs.readFileSync(file, "utf8").replace(/^\.pragma library\s*/, "");
+  const context = {};
+  source = source.replace(/^\.import "([^"]+)" as (\w+)\s*$/gm, (_, imported, name) => {
+    context[name] = loadLibrary(path.resolve(path.dirname(file), imported));
+    return "";
+  });
+  vm.runInNewContext(source, context);
+  return context;
+}
+const S = loadLibrary(path.join(root, "designs/Strings.js"));
 
 test("every language has every line", () => {
   const langs = Array.from(Object.keys(S.TEXT));
@@ -52,11 +58,7 @@ test("parts, icons and case are kept", () => {
   assert.equal(S.tr("de", "Not a line"), "Not a line");
 });
 
-// ExplorerStrings.js imports Strings.js as Base; hand it the same context.
-const uiSource = fs.readFileSync(path.join(root, "ExplorerStrings.js"), "utf8")
-  .replace(/^\.pragma library\s*/, "").replace(/^\.import .*$/m, "");
-const U = { Base: S };
-vm.runInNewContext(uiSource + "\nthis.TEXT = TEXT; this.tr = tr;", U);
+const U = loadLibrary(path.join(root, "ExplorerStrings.js"));
 
 test("the explorer has every line in every language", () => {
   const langs = Object.keys(U.TEXT);
@@ -74,7 +76,7 @@ test("every tr() text in the explorer, designer and editor is a known line", () 
   const keys = new Set(Object.keys(U.TEXT.de).map((k) => k.toLowerCase()));
   const one = (t) => keys.has(t.toLowerCase().replace(/^[^a-z0-9%]+/, ""));
   const known = (t) => one(t) || t.split(/\s+·\s+/).every(one);
-  const files = ["Explorer.qml", "Designer.qml", "Editor.qml", "DesignerField.qml"];
+  const files = fs.readdirSync(root).filter((file) => /^(Explorer|Designer|Editor).*\.qml$/.test(file));
   let count = 0;
   for (const file of files) {
     const text = fs.readFileSync(path.join(root, file), "utf8");

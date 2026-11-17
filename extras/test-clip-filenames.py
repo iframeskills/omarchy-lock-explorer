@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 root_dir = Path(__file__).resolve().parents[1]
-source = (root_dir / "Service.qml").read_text()
+source = (root_dir / "ServiceMedia.qml").read_text()
 script = source.split("readonly property string clipDesignScript: '\n", 1)[1].split("\n'", 1)[0]
 # Decode the escapes used by this embedded QML string.
 script = script.replace("\\'", "'").replace("\\\\", "\\")
