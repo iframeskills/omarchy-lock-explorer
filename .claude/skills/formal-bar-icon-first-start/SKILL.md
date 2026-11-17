@@ -1,8 +1,8 @@
 ---
 name: formal-bar-icon-first-start
-description: "Formal check of the bar icon first start in omarchy-lock-explorer: addBarIconOnceOnFirstStart, its retry timer, setBarIcon and barIconApplyProc in Service.qml. Use when a change touches that code, the barIconDefaulted flag, or extras/bar-icon.sh, and in a gate run that names Service.qml."
+description: "Formal check of the bar icon first start in omarchy-lock-explorer: addBarIconOnceOnFirstStart, its retry timer, setBarIcon and barIconApplyProc in ServiceSettingsStore.qml, ServiceDesktop.qml and Service.qml. Use when a change touches that code, the barIconDefaulted flag, or extras/bar-icon.sh, and in a gate run that names one of those files."
 metadata:
-  covers: "Service.qml LocalSettings.qml extras/bar-icon.sh"
+  covers: "Service.qml ServiceSettingsStore.qml ServiceDesktop.qml LocalSettings.qml extras/bar-icon.sh"
   sync: c20907c7a3397a59e801fd863b3b2a3a936bea8a
   check: ".claude/skills/formal-bar-icon-first-start/check"
 ---
@@ -34,9 +34,10 @@ TLC cannot run. It needs `tla2tools.jar` 1.7.4 (mise `http-tla2tools`) and Java 
 `java temurin-25`). Set `TLA2TOOLS_JAR` or `JAVA` to override. A run takes about 2 seconds.
 
 The check does two things. It runs TLC on `BarIconFirstStart.tla` with `ok.cfg`. Then it
-reads `Service.qml` and fails if a guard in `addBarIconOnceOnFirstStart` is gone or moved, if
-`setBarIcon` lost `if (barIconApplyProc.running) return false`, or if
-`barIconFirstStartRetryTimer.start()` is gone. The anchors tie the model to the code.
+reads the code and fails if a guard in `addBarIconOnceOnFirstStart` (`ServiceSettingsStore.qml`)
+is gone or moved, if `setBarIcon` (`ServiceDesktop.qml`) lost
+`if (barIconApplyProc.running) return false`, or if `barIconFirstStartRetryTimer.start()` is
+gone from `Service.qml`. The anchors tie the model to the code.
 
 Read each TLC result with the `/statechart` skill. It shows an invariant violation as its
 shortest path in plain words.
@@ -45,15 +46,15 @@ shortest path in plain words.
 
 | Model | Code |
 |---|---|
-| `TimerFires` (one step) | one call of `addBarIconOnceOnFirstStart` in `Service.qml`. QML runs JS on one thread, so one call is one step. |
-| `CheckDefaultedGuard` | `if (pluginEntry().barIconDefaulted === true) return` |
-| `CheckProcGuard` | `if (barIconApplyProc.running) { barIconFirstStartRetryTimer.restart(); return }` |
+| `TimerFires` (one step) | one call of `addBarIconOnceOnFirstStart` in `ServiceSettingsStore.qml`. QML runs JS on one thread, so one call is one step. |
+| `CheckDefaultedGuard` | `if (root.pluginEntry().barIconDefaulted === true) return` |
+| `CheckProcGuard` | `if (root.barIconApplyProc.running) { barIconFirstStartRetryTimer.restart(); return }` |
 | `barHasWidget` | `localSettings.barHasWidget`, set in `parse()` of `LocalSettings.qml` |
 | `attempts`, `MaxAttempts = 5` | `barIconFirstStartRetryTimer.attempts++ < 5` |
 | `procRunning`, `procAdds` | `barIconApplyProc.running`, and its command with or without `--remove` |
-| `ProcExits`, `Reload` | `onExited: localSettings.reload()`. The reload is a separate step, because the file view can lag. |
+| `ProcExits`, `Reload` | `onExited: root.localSettings.reload()` in `ServiceDesktop.qml`. The reload is a separate step, because the file view can lag. |
 | `UserSetsBarIcon` | the Settings "Bar icon" row and `omarchy-shell lock setBarIcon`, both through `setBarIcon` |
-| `PluginRestarts` | `Component.onCompleted` starts the timer. `barIconDefaulted` survives in shell.json. |
+| `PluginRestarts` | `Component.onCompleted` in `Service.qml` starts the timer. `barIconDefaulted` survives in shell.json. |
 
 ## Proof that it can fail
 
@@ -61,7 +62,7 @@ shortest path in plain words.
   breaks in 3 steps: the timer adds the icon, the script still runs, the timer writes the flag.
 - `broken-defaulted-guard.cfg` removes the flag guard. `NoAutoAddOnceDefaulted` breaks after
   a restart with the icon removed.
-- Real code: if the running guard in `Service.qml` becomes `if (false)`, `check` exits 1.
+- Real code: if the running guard in `ServiceSettingsStore.qml` becomes `if (false)`, `check` exits 1.
   This was done at `sync`, then reverted.
 
 To run a variant by hand, run this from this folder:

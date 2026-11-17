@@ -322,9 +322,9 @@ again). The explorer follows the same choice, with its boot screen page, the des
 code editor; only the designs' own names and descriptions are still English. Designs that play on a terminal or a video recorder (Terminal,
 Login, Statusline, VHS, Rain's lines) keep their English on purpose.
 
-The lock screen's text lives in `designs/Strings.js` and the explorer's in `ExplorerStrings.js`,
-both keyed by the English. Corrections and new languages are
-welcome as pull requests. In a design of your own, `lock.tr("Press Enter to unlock")` gives the
+The lock screen's text lives in `designs/StringsData.js` and the explorer's in one file per
+language in `explorer-strings/`, both keyed by the English. A new explorer language also needs
+an entry in `ExplorerStrings.js`. Corrections and new languages are welcome as pull requests. In a design of your own, `lock.tr("Press Enter to unlock")` gives the
 translated text and `lock.date("dddd d MMMM")` a date in the lock screen's language.
 
 ### Reduce motion and size

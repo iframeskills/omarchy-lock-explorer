@@ -8,12 +8,12 @@ work="$(mktemp -d)"; trap 'rm -rf "$work"' EXIT
 run() { "$java_bin" -XX:+UseParallelGC -cp "$jar" tlc2.TLC -workers auto -deadlock -metadir "$work/$1" -config "$here/$1.cfg" "$here/BarIconFirstStart.tla" >"$work/$1.log" 2>&1; }
 cd "$here" || exit 2
 repo="$(cd "$here/../../.." && pwd)"
-body="$(awk '/function addBarIconOnceOnFirstStart\(\)/{f=1} f{print} f&&/^  }$/{exit}' "$repo/Service.qml")"
-setter="$(awk '/function setBarIcon\(v\)/{f=1} f{print} f&&/^  }$/{exit}' "$repo/Service.qml")"
+body="$(awk '/function addBarIconOnceOnFirstStart\(\)/{f=1} f{print} f&&/^  }$/{exit}' "$repo/ServiceSettingsStore.qml")"
+setter="$(awk '/function setBarIcon\(v\)/{f=1} f{print} f&&/^  }$/{exit}' "$repo/ServiceDesktop.qml")"
 order=""
 for needle in 'pluginEntry().barIconDefaulted === true) return' 'barIconApplyProc.running) { barIconFirstStartRetryTimer.restart(); return }' 'localSettings.barHasWidget' 'writeEntry(current)' 'attempts++ < 5' 'setBarIcon(true)'; do
   n="$(grep -nF -- "$needle" <<<"$body" | head -1 | cut -d: -f1)"
-  [ -n "$n" ] || { echo "fail: Service.qml addBarIconOnceOnFirstStart lost: $needle"; exit 1; }
+  [ -n "$n" ] || { echo "fail: ServiceSettingsStore.qml addBarIconOnceOnFirstStart lost: $needle"; exit 1; }
   order="$order $n"
 done
 [ "$(tr ' ' '\n' <<<"$order" | sed '/^$/d' | sort -n | tr '\n' ' ')" = "$(tr ' ' '\n' <<<"$order" | sed '/^$/d' | tr '\n' ' ')" ] || { echo "fail: the guards in addBarIconOnceOnFirstStart changed order"; exit 1; }
