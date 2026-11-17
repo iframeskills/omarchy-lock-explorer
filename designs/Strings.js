@@ -12,8 +12,8 @@
 // capitals or all lowercase comes back the same way, so one entry serves
 // "LOCKED", "locked" and "Locked". %1 is filled in by the caller with .arg().
 //
-// Corrections and new languages are welcome: add a block below, and a line to
-// LANGUAGES.
+// The languages and their text are in StringsData.js. Corrections and new
+// languages are welcome: add a block to TEXT there, and a line to LANGUAGES.
 
 var TEXT = Data.TEXT
 var LANGUAGES = Data.LANGUAGES
