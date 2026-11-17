@@ -72,6 +72,13 @@ test("the explorer has every line in every language", () => {
   }
 });
 
+test("every explorer language keeps the lines it had before the split into language files", () => {
+  const contract = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures/explorer-string-keys.json"), "utf8"));
+  assert.deepEqual(Object.keys(U.TEXT), contract.languages);
+  for (const l of contract.languages)
+    assert.deepEqual(Object.keys(U.TEXT[l]).sort(), contract.keys, `${l} differs from the saved lines`);
+});
+
 test("every tr() text in the explorer, designer and editor is a known line", () => {
   const keys = new Set(Object.keys(U.TEXT.de).map((k) => k.toLowerCase()));
   const one = (t) => keys.has(t.toLowerCase().replace(/^[^a-z0-9%]+/, ""));
