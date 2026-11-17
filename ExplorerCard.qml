@@ -33,7 +33,7 @@ BorderSurface {
 
   MouseArea { anchors.fill: parent; onClicked: {} }
 
-  ExplorerHeader { id: header; root: root }
+  ExplorerHeader { id: header; root: card.root }
 
   // Left nav sidebar (redesign): sections as a vertical list with a
   // border-left accent, counts on the right.
@@ -215,7 +215,7 @@ BorderSurface {
 
   // Right live-preview panel (redesign): the current lock screen rendered
   // live, plus the boot-screen preview.
-  ExplorerPreviewPanel { id: previewPanel; root: root }
+  ExplorerPreviewPanel { id: previewPanel; root: card.root }
 
   // What an empty grid means: nothing starred yet, or no match.
   Text {
@@ -233,7 +233,7 @@ BorderSurface {
     font.pixelSize: Style.font.bodySmall
   }
 
-  ExplorerGrid { id: grid; root: root }
+  ExplorerGrid { id: grid; root: card.root }
 
   // Above the grid: every design has a MouseArea of its own and so does the
   // cell, and those eat wheel events before the grid ever sees them. No

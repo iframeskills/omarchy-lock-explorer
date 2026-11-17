@@ -42,9 +42,9 @@ Item {
     width: root.settingsPane.width
     spacing: Style.space(14)
 
-    ExplorerSettingsPage { id: settingsPage; root: root }
+    ExplorerSettingsPage { id: settingsPage; root: settingsPane.root }
 
-    ExplorerBootPage { id: bootPage; root: root }
+    ExplorerBootPage { id: bootPage; root: settingsPane.root }
   }
   }
 }

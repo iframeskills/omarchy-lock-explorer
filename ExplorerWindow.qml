@@ -170,7 +170,7 @@ PanelWindow {
     }
   }
 
-  ExplorerCard { id: card; root: root }
+  ExplorerCard { id: card; root: panel.root }
 
   BorderSurface {
     id: editorSurface

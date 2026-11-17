@@ -308,5 +308,5 @@ Item {
   }
 
   // The two settings pages live where the grid otherwise is.
-  ExplorerSettingsPane { id: settingsPane; root: root }
+  ExplorerSettingsPane { id: settingsPane; root: header.root }
 }
