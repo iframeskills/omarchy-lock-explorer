@@ -322,9 +322,9 @@ again). The explorer follows the same choice, with its boot screen page, the des
 code editor; only the designs' own names and descriptions are still English. Designs that play on a terminal or a video recorder (Terminal,
 Login, Statusline, VHS, Rain's lines) keep their English on purpose.
 
-The lock screen's text lives in `designs/Strings.js` and the explorer's in `ExplorerStrings.js`,
-both keyed by the English. Corrections and new languages are
-welcome as pull requests. In a design of your own, `lock.tr("Press Enter to unlock")` gives the
+The lock screen's text lives in `designs/StringsData.js` and the explorer's in one file per
+language in `explorer-strings/`, both keyed by the English. A new explorer language also needs
+an entry in `ExplorerStrings.js`. Corrections and new languages are welcome as pull requests. In a design of your own, `lock.tr("Press Enter to unlock")` gives the
 translated text and `lock.date("dddd d MMMM")` a date in the lock screen's language.
 
 ### Reduce motion and size
@@ -731,7 +731,7 @@ On Omarchy 4.0.3 and later the explorer, editor and designer do not get the serv
 from the host (it is an authentication service, kept private). `Service.qml` publishes a
 facade of itself through `Bridge.js` instead, with the settings, design state and actions the
 UI needs and none of the PAM state. Anything new the UI reads off `service` has to be added to
-that facade; `extras/test-service-api.py` fails when something is missing.
+that facade in `ServiceExplorerBridge.qml`; `extras/test-service-api.py` fails when something is missing.
 
 Every script that writes a file of the user's — design copies, imported clips, boot previews,
 the launcher and menu entries — goes through `extras/safe-paths.sh`: the target must sit under

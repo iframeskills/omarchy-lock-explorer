@@ -9,7 +9,7 @@ start and records `barIconDefaulted`, so that a removal sticks.
 - `bar-icon-add`: `extras/bar-icon.sh` adds a `qml` module with id `lock-explorer`.
 - `bar-icon-status`: `extras/bar-icon.sh --status` prints `installed` or `missing`.
 - `bar-icon-remove`: `extras/bar-icon.sh --remove` takes it off.
-- `bar-icon-default`: `addBarIconOnceOnFirstStart()` in `Service.qml` calls the script on the first start.
+- `bar-icon-default`: `addBarIconOnceOnFirstStart()` in `ServiceSettingsStore.qml` calls the script on the first start.
 
 ## How to get to it (user POV)
 

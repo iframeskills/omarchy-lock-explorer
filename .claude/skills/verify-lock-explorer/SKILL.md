@@ -58,7 +58,7 @@ Quote the `ok`/`FAIL` lines and the folder path in the gate report.
   imports `qs.Commons` from the shell. A visual change (icon, design, layout) is proven
   only to parse, not to look right. A nested `omarchy-shell` with its own `HOME` and
   Wayland socket is untested.
-- Open question: `Service.qml` logic such as `addBarIconOnceOnFirstStart()` runs only in the shell.
+- Open question: Service logic such as `addBarIconOnceOnFirstStart()` in `ServiceSettingsStore.qml` runs only in the shell.
   Nothing here drives its timers; the bar icon drive proves only the script that it calls.
 - `extras/boot-vm-test.sh` and `extras/addon-vm-test.sh` boot QEMU and read the host UKI.
   Run them only for a change under `plymouth/`; they are slow and not part of `verify.sh`.

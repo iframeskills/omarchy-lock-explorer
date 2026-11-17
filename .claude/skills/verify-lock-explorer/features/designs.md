@@ -6,7 +6,7 @@ switches between them, and the designer builds new ones.
 ## Sub-features
 
 - `design-load`: each design QML parses.
-- `design-strings`: the explorer labels in `ExplorerStrings.js`.
+- `design-strings`: the explorer labels in `ExplorerStrings.js` and `explorer-strings/`.
 - `design-facade`: every service member that the explorer uses exists.
 
 ## How to get to it (user POV)

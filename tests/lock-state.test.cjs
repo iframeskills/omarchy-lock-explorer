@@ -5,7 +5,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const assert = require('node:assert/strict');
 const test = require('node:test');
-const source = fs.readFileSync(path.join(__dirname, '../Service.qml'), 'utf8');
+const source = fs.readFileSync(path.join(__dirname, '../ServiceSessionLock.qml'), 'utf8');
 
 function bodyAfter(marker) {
   const at = source.indexOf(marker);

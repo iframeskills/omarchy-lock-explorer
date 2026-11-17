@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Keep the explorer facade in Service.qml in step with what the UI uses.
+"""Keep the explorer facade in ServiceExplorerBridge.qml in step with what the UI uses.
 
 On Omarchy 4.0.3+ the explorer, editor and designer see the service only
 through the facade published via Bridge.js. A member used in the UI but left
@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
-service = (root / "Service.qml").read_text(encoding="utf-8")
+service = (root / "ServiceExplorerBridge.qml").read_text(encoding="utf-8")
 
 start = service.index("id: explorerApiComponent")
 end = service.index("function publishExplorerApi", start)
@@ -24,8 +24,8 @@ signals = set(re.findall(r"signal (\w+)\(", facade))
 
 used = set()
 handlers = set()
-for name in ["Explorer.qml", "Designer.qml", "Editor.qml"]:
-    text = (root / name).read_text(encoding="utf-8")
+for path in sorted({*root.glob("Explorer*.qml"), *root.glob("Designer*.qml"), root / "Editor.qml"}):
+    text = path.read_text(encoding="utf-8")
     used |= set(re.findall(r"\bservice\.([A-Za-z_]\w*)", text))
     for block in re.finditer(r"Connections \{\s*target: [\w.]*service\b(.*?)\n  \}", text, re.S):
         handlers |= set(re.findall(r"function on([A-Z]\w*)\(", block.group(1)))

@@ -1,7 +1,7 @@
 // Security key presence while locked: wake and retry recheck it, the hotplug
 // watcher runs for the whole lock, a failed round without a PIN waits for udev
 // before asking the probe, and a key plugged back in is offered to an empty
-// field. The functions are lifted out of Service.qml and run against a stub
+// field. The functions are lifted out of ServiceSecurityKey.qml and run against a stub
 // root, the same way the other suites read the real source.
 const fs = require('node:fs');
 const path = require('node:path');
@@ -9,7 +9,7 @@ const vm = require('node:vm');
 const assert = require('node:assert/strict');
 const test = require('node:test');
 
-const source = fs.readFileSync(path.join(__dirname, '../Service.qml'), 'utf8');
+const source = fs.readFileSync(path.join(__dirname, '../ServiceSecurityKey.qml'), 'utf8');
 
 function bodyAfter(marker, start = 0) {
   const at = source.indexOf(marker, start);
