@@ -731,7 +731,7 @@ On Omarchy 4.0.3 and later the explorer, editor and designer do not get the serv
 from the host (it is an authentication service, kept private). `Service.qml` publishes a
 facade of itself through `Bridge.js` instead, with the settings, design state and actions the
 UI needs and none of the PAM state. Anything new the UI reads off `service` has to be added to
-that facade; `extras/test-service-api.py` (run in CI) fails when something is missing.
+that facade; `extras/test-service-api.py` fails when something is missing.
 
 Every script that writes a file of the user's — design copies, imported clips, boot previews,
 the launcher and menu entries — goes through `extras/safe-paths.sh`: the target must sit under
