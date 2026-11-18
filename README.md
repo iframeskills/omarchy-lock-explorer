@@ -198,7 +198,7 @@ o.bind("SUPER + SHIFT + L", "Lock screen explorer", "omarchy-shell lock explore"
 Other commands:
 
 ```sh
-omarchy-shell lock explorePanel          # the side panel, whatever Opens as says
+omarchy-shell lock explorePanel          # the side panel, regardless of the Open as setting
 omarchy-shell lock exploreFull           # the full explorer
 omarchy-shell lock openAs
 omarchy-shell lock setOpenAs panel       # or full: what `explore` opens first
