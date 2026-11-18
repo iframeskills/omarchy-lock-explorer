@@ -1,7 +1,7 @@
 # Lock Screen Explorer
 
-This plugin provides lock screens for Omarchy 4, an explorer to preview and switch between them,
-and a designer to build your own. Unlock with your password, a FIDO2 security key, a fingerprint or your face.
+This plugin provides lock screens for Omarchy 4. Use the explorer to preview and switch between them,
+or the designer to build your own. Unlock with your password, a FIDO2 security key, a fingerprint or your face.
 Colors and fonts follow your Omarchy theme.
 
 This repo is my own copy of the code, based on [SirJul1337's Lock Screen Explorer plugin](https://github.com/SirJul1337/omarchy-lock-explorer).
